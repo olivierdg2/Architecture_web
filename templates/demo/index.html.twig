@@ -3,14 +3,14 @@
 {% block title %}Hello DemoController!{% endblock %}
 
 {% block body %}
-
 <section class="recettes">
     {% for recette in recettes %}
     <recette>
         <h2>{{recette.name}}</h2>
-        <div class = "metadata">Ecrit le ..</div>
+        <div class = "metadata">Ecrit le {{recette.createdAt | date('d/m/Y')}} à {{ recette.createdAt | date('H:i') }}</div>
         <div>
-            Catégorie: {{recette.category.name}}
+            <h3>Catégorie</h3>
+            {{recette.category.name}}
         </div>
         <div class="content">
             <img src="http://placehold.it/350x150" alt="">
@@ -21,7 +21,8 @@
             <h3>Préparation</h3>
             {{recette.preparation | raw}}
         </div>
-        <a href="{{ path('demo_show', {'id':recette.id}) }}" class="btn btn-primary">Lire la suite</a>
+        <a href="{{ path('recette_show', {'id':recette.id}) }}" class="btn btn-primary">Lire la suite</a>
+        <a href="{{ path('edit_r', {'id':recette.id}) }}" class="btn btn-primary">Modifier</a>
     <recette>
     {% endfor %}
 </section>

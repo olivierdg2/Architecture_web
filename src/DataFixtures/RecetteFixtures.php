@@ -22,6 +22,7 @@ class RecetteFixtures extends Fixture
         for($i = 1; $i <= 10; $i++){
             $recette = new Recette();
             $recette->setName("Nom n°$i")
+            ->setCreatedAt(new \datetime())
             ->setIngredients("<p>Sucre</p><p>Farine</p>")
             ->setPreparation("blabla");
             if($i%2 == 0){

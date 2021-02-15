@@ -3,9 +3,10 @@
 {%block body %}
     <recette>
         <h2>{{recette.name}}</h2>
-        <div class = "metadata">Ecrit le ..</div>
+        <div class = "metadata">Ecrit le {{recette.createdAt | date('d/m/Y')}} à {{ recette.createdAt | date('H:i') }}</div>
         <div>
-            Catégorie: {{recette.category.name}}
+            <h3>Catégorie</h3>
+            {{recette.category.name}}
         </div>
         <div class="content">
             <img src="http://placehold.it/350x150" alt="">

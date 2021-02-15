@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+{% form_theme formRecette 'bootstrap_4_layout.html.twig' %}
+{% block body %}
+    <h1>Création d'une recette</h1>
+
+    {{ form_start(formRecette) }}
+
+    {{ form_row(formRecette.name) }}
+
+    {{ form_row(formRecette.category) }}
+
+    {{ form_row(formRecette.Ingredients) }}
+
+    {{ form_row(formRecette.preparation) }}
+
+    {{ form_widget(formRecette) }}
+
+    <button type="submit" class="btn btn-success">
+        {% if editMode %}
+            Enregistrer 
+        {% else %}
+            Ajouter la recette 
+        {% endif %}
+    </button>
+
+    {{ form_end(formRecette) }}
+
+{% endblock %}
