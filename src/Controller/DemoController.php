@@ -8,11 +8,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Recette;
 use App\Repository\RecetteRepository;
 use App\Repository\CategoryRepository;
-use Doctrine\ORM\EntityRepository;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use App\Entity\Category;
+use App\Form\CategoryType;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\RecetteType;
@@ -27,19 +24,19 @@ class DemoController extends AbstractController
         //Find all recipes in the RecetteRepository
         $recettes = $repo->findAll();
         return $this->render('demo/index.html.twig', [
-            'controller_name' => 'DemoController',
-            'recettes' => $recettes,
+            'recettes' => $recettes
         ]);
     }
 
     /**
      * @Route("/categories", name="categories")
      */
-    public function categories(): Response
+    public function categories(CategoryRepository $repo): Response
     {
+        //Find all category in the CategoryRepository
+        $categories = $repo->findAll();
         return $this->render('demo/categories.html.twig', [
-            'title' => "Bienvenue",
-            'age' => 31
+            'categories' => $categories
         ]);
     }
 
@@ -70,7 +67,7 @@ class DemoController extends AbstractController
             if(!$recette->getId()){
                 $recette->setCreatedAt(new \DateTime());
             }
-            //Persist and flush the new recip to the db 
+            //Persist and flush the new recipe to the db 
             $manager->persist($recette);
             $manager->flush();
             //redirect to the finished recipe page 
@@ -84,12 +81,54 @@ class DemoController extends AbstractController
     }
 
     /**
+     * @Route("/category/new_category", name="create_r")
+     * @Route("/category/{id}/edit", name="edit_c")
+     */
+    public function create_category(Category $category = null, Request $request, EntityManagerInterface $manager) {
+
+        //If it's edit mode (no category sent) create a new Categpry with empty fields 
+        if(!$category){
+            $category = new Category();
+        }
+
+        //Create form according to the category's format 
+        $form = $this->createForm(CategoryType::class, $category);
+        
+        //Wait for request from the form 
+        $form->handleRequest($request);
+
+        //When the form is validated
+        if($form->isSubmitted() && $form->createView()) {
+            //Persist and flush the new category to the db 
+            $manager->persist($category);
+            $manager->flush();
+            //redirect to the finished category page 
+            return $this->redirectToRoute('category_show', ['id' => $category->getId()]);
+        }
+
+        return $this->render('demo/create_category.html.twig',[
+            'formCategory' => $form->createView(),
+            'editMode' => $category->getId() != null
+        ]);
+    }
+
+    /**
      * @Route("/recette/{id}", name="recette_show")
      */
-    public function show(Recette $recette): Response
+    public function recette_show(Recette $recette): Response
     {
         return $this-> render("demo/show.html.twig", [
             'recette' => $recette
+        ]);
+    }
+
+    /**
+     * @Route("/category/{id}", name="category_show")
+     */
+    public function category_show(Category $category): Response
+    {
+        return $this-> render("demo/category_show.html.twig", [
+            'category' => $category
         ]);
     }
 }

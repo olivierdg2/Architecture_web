@@ -1,7 +1,11 @@
 {% extends 'base.html.twig' %}
 {% form_theme formRecette 'bootstrap_4_layout.html.twig' %}
 {% block body %}
-    <h1>Création d'une recette</h1>
+    {% if editMode %}
+        <h1>Modification d'une recette</h1> 
+    {% else %}
+        <h1>Création d'une recette</h1>
+    {% endif %}
 
     {{ form_start(formRecette) }}
 

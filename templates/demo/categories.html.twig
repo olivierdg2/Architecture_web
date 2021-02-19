@@ -1,11 +1,19 @@
-{% extends "base.html.twig" %}
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello DemoController!{% endblock %}
 
 {% block body %}
-    <h1>{{title}}</h1>
-    {% if age > 18 %}
-        <p>maj</p>
-    {% else %}
-        <p>min</p>
-    {% endif %}
-    <p>blabla<p>
+<section class="categories">
+    {% for category in categories %}
+    <category>
+        <h1>{{category.name}}</h1>
+        <div class="content">
+            <h4>Description</h4>
+            {{category.description | raw}}
+        </div>
+        <a href="{{ path('category_show', {'id':category.id}) }}" class="btn btn-primary">Lire la suite</a>
+        <a href="{{ path('edit_c', {'id':category.id}) }}" class="btn btn-primary">Modifier</a>
+    <category>
+    {% endfor %}
+</section>
 {% endblock %}
