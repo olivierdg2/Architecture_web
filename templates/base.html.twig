@@ -12,18 +12,43 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <div class="collapse navbar-collapse" id="navbarColor01">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
+                
+                    <li 
+                    {% if app.request.get('_route') == 'home' %}
+                        class="nav-item active"
+                    {% else %}
+                        class="nav-item"
+                    {% endif %}
+                    >
                         <a class="nav-link" href="{{path('home')}}">Recettes
                         <span class="sr-only">(current)</span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li 
+                    {% if app.request.get('_route') == 'categories' %}
+                        class="nav-item active"
+                    {% else %}
+                        class="nav-item"
+                    {% endif %}
+                    >
                         <a class="nav-link" href="{{path('categories')}}">Catégories</a>
                     </li>
-                    <li class="nav-item">
+                    <li 
+                    {% if app.request.get('_route') == 'create_r' %}
+                        class="nav-item active"
+                    {% else %}
+                        class="nav-item"
+                    {% endif %}
+                    >
                         <a class="nav-link" href="{{path('create_r')}}">Ajouter une recette</a>
                     </li>
-                    <li class="nav-item">
+                    <li 
+                    {% if app.request.get('_route') == 'create_c' %}
+                        class="nav-item active"
+                    {% else %}
+                        class="nav-item"
+                    {% endif %}
+                    >
                         <a class="nav-link" href="{{path('create_c')}}">Ajouter une catégorie</a>
                     </li>
                 </ul>
