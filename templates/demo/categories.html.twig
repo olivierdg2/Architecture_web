@@ -3,17 +3,23 @@
 {% block title %}Hello DemoController!{% endblock %}
 
 {% block body %}
-<section class="categories">
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
     {% for category in categories %}
-    <category>
-        <h1>{{category.name}}</h1>
-        <div class="content">
-            <h4>Description</h4>
-            {{category.description | raw}}
-        </div>
-        <a href="{{ path('category_show', {'id':category.id}) }}" class="btn btn-primary">Lire la suite</a>
-        <a href="{{ path('edit_c', {'id':category.id}) }}" class="btn btn-primary">Modifier</a>
-    <category>
+    <tr class="table-active">
+      <th scope="row"><h1>{{category.name}}</h1></th>
+      <td>{{category.description | raw}}</td>
+      <td><a href="{{ path('edit_c', {'id':category.id}) }}" class="btn btn-danger">Modifier</a></td>
+      <td><a href="{{ path('delete_c', {'id':category.id}) }}" class="btn btn-primary">Supprimer</a></td>
+    </tr>
     {% endfor %}
-</section>
+  </tbody>
+</table>
+
 {% endblock %}

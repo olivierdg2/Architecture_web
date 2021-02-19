@@ -22,7 +22,8 @@ class RecetteType extends AbstractType
             ])
             ->add('category', EntityType::class, [ 
                 'class' => Category::class,
-                'choice_label' => 'name'
+                'choice_label' => 'name',
+                'label' => 'Catégorie'
             ])
             ->add('Ingredients', TextareaType::class, [
                 'attr' => ['placeholder' => "Liste des ingrédients"],

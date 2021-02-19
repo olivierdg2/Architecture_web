@@ -1,29 +1,24 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello DemoController!{% endblock %}
-
 {% block body %}
-<section class="recettes">
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
     {% for recette in recettes %}
-    <recette>
-        <h2>{{recette.name}}</h2>
-        <div class = "metadata">Ecrit le {{recette.createdAt | date('d/m/Y')}} à {{ recette.createdAt | date('H:i') }}</div>
-        <div>
-            <h3>Catégorie</h3>
-            {{recette.category.name}}
-        </div>
-        <div class="content">
-            <img src="http://placehold.it/350x150" alt="">
-            <h3>Ingrédients</h3>
-            {{recette.ingredients | raw}}
-        </div>
-        <div>
-            <h3>Préparation</h3>
-            {{recette.preparation | raw}}
-        </div>
-        <a href="{{ path('recette_show', {'id':recette.id}) }}" class="btn btn-primary">Lire la suite</a>
-        <a href="{{ path('edit_r', {'id':recette.id}) }}" class="btn btn-primary">Modifier</a>
-    <recette>
+    <tr class="table-active">
+      <th scope="row"><h1>{{recette.name}}</h1></th>
+      <td>{{recette.category.name}}</td>
+      <td><a href="{{ path('show_r', {'id':recette.id}) }}" class="btn btn-info">Lire la suite</a></td>
+      <td><a href="{{ path('edit_r', {'id':recette.id}) }}" class="btn btn-danger">Modifier</a></td>
+      <td><a href="{{ path('delete_r', {'id':recette.id}) }}" class="btn btn-primary">Supprimer</a></td>
+    </tr>
     {% endfor %}
-</section>
+  </tbody>
+</table>
+
 {% endblock %}

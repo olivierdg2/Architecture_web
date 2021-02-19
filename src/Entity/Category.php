@@ -30,7 +30,8 @@ class Category
     private $description;
 
     /**
-     * @ORM\OneToMany(targetEntity=Recette::class, mappedBy="category")
+     * @ORM\OneToMany(targetEntity=Recette::class, mappedBy="category", cascade={"persist", "remove"})
+     * 
      */
     private $recettes;
 

@@ -23,7 +23,7 @@ class Recette
     private $name;
 
     /**
-     * @ORM\Column(type="array")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="recettes")
      */
     private $category;
 

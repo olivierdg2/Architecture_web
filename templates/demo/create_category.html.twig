@@ -19,9 +19,10 @@
         {% if editMode %}
             Enregistrer 
         {% else %}
-            Ajouter la category
+            Ajouter la categorie
         {% endif %}
     </button>
+    <a href="{{ path('home') }}" class="btn btn-primary">Annuler</a>
 
     {{ form_end(formCategory) }}
 

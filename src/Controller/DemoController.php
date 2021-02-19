@@ -71,7 +71,7 @@ class DemoController extends AbstractController
             $manager->persist($recette);
             $manager->flush();
             //redirect to the finished recipe page 
-            return $this->redirectToRoute('recette_show', ['id' => $recette->getId()]);
+            return $this->redirectToRoute('show_r', ['id' => $recette->getId()]);
         }
 
         return $this->render('demo/create_recette.html.twig',[
@@ -81,7 +81,7 @@ class DemoController extends AbstractController
     }
 
     /**
-     * @Route("/category/new_category", name="create_r")
+     * @Route("/category/new_category", name="create_c")
      * @Route("/category/{id}/edit", name="edit_c")
      */
     public function create_category(Category $category = null, Request $request, EntityManagerInterface $manager) {
@@ -113,22 +113,52 @@ class DemoController extends AbstractController
     }
 
     /**
-     * @Route("/recette/{id}", name="recette_show")
+     * @Route("/recette/{id}", name="show_r")
      */
     public function recette_show(Recette $recette): Response
     {
-        return $this-> render("demo/show.html.twig", [
+        return $this-> render("demo/recette_show.html.twig", [
             'recette' => $recette
         ]);
     }
 
     /**
-     * @Route("/category/{id}", name="category_show")
+     * @Route("/category/{id}", name="show_c")
      */
     public function category_show(Category $category): Response
     {
         return $this-> render("demo/category_show.html.twig", [
             'category' => $category
+        ]);
+    }
+
+    /**
+     * @Route("/recette/{id}/delete", name="delete_r")
+     */
+    public function delete_recette(Recette $recette, EntityManagerInterface $manager, RecetteRepository $repo): Response
+    {
+        $manager->remove($recette);
+        $manager->flush();
+
+        //Find all recipes in the RecetteRepository
+        $recettes = $repo->findAll();
+        return $this->redirectToRoute('home', [
+            'recettes' => $recettes
+        ]);
+    }
+
+    /**
+     * @Route("/category/{id}/delete", name="delete_c")
+     */
+    public function delete_category(Category $category, EntityManagerInterface $manager, CategoryRepository $repo): Response
+    {
+        $manager->remove($category);
+        $manager->flush();
+
+        //Find all category in the CategoryRepository
+        $categories = $repo->findAll();
+        return $this->redirectToRoute('categories', [
+            'categories' => $categories
         ]);
     }
 }
