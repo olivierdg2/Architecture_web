@@ -26,8 +26,8 @@ class DemoController extends AbstractController
 
         //Search filter
         $filter = "";
-
         $filter = $request->get('filter');
+
         return $this->render('demo/index.html.twig', [
             'recettes' => $recettes,
             'filter' => $filter
@@ -44,6 +44,8 @@ class DemoController extends AbstractController
 
         //Search filter
         $filter = "";
+        $filter = $request->get('filter');
+
         return $this->render('demo/categories.html.twig', [
             'categories' => $categories,
             'filter' => $filter
