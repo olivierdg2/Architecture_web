@@ -19,24 +19,34 @@ class DemoController extends AbstractController
     /**
      * @Route("/", name="home")
      */
-    public function home(RecetteRepository $repo): Response
+    public function home(RecetteRepository $repo, Request $request): Response
     {
         //Find all recipes in the RecetteRepository
         $recettes = $repo->findAll();
+
+        //Search filter
+        $filter = "";
+
+        $filter = $request->get('filter');
         return $this->render('demo/index.html.twig', [
-            'recettes' => $recettes
+            'recettes' => $recettes,
+            'filter' => $filter
         ]);
     }
 
     /**
      * @Route("/categories", name="categories")
      */
-    public function categories(CategoryRepository $repo): Response
+    public function categories(CategoryRepository $repo, Request $request): Response
     {
         //Find all category in the CategoryRepository
         $categories = $repo->findAll();
+
+        //Search filter
+        $filter = "";
         return $this->render('demo/categories.html.twig', [
-            'categories' => $categories
+            'categories' => $categories,
+            'filter' => $filter
         ]);
     }
 
@@ -44,7 +54,7 @@ class DemoController extends AbstractController
      * @Route("/recette/new_recette", name="create_r")
      * @Route("/recette/{id}/edit", name="edit_r")
      */
-    public function create_recette(Recette $recette = null, Request $request, EntityManagerInterface $manager,CategoryRepository $repo) {
+    public function create_recette(Recette $recette = null, Request $request, EntityManagerInterface $manager) {
 
         //If it's edit mode (no recette sent) create a new Recette with empty fields 
         if(!$recette){
@@ -103,7 +113,7 @@ class DemoController extends AbstractController
             $manager->persist($category);
             $manager->flush();
             //redirect to the finished category page 
-            return $this->redirectToRoute('category_show', ['id' => $category->getId()]);
+            return $this->redirectToRoute('show_c', ['id' => $category->getId()]);
         }
 
         return $this->render('demo/create_category.html.twig',[

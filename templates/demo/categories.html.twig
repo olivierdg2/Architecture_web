@@ -11,7 +11,7 @@
     </tr>
   </thead>
   <tbody>
-    {% for category in categories %}
+    {% for category in categories|filter(category => filter in category.name) %}
     <tr class="table-active">
       <th scope="row"><h1>{{category.name}}</h1></th>
       <td>{{category.description | raw}}</td>
