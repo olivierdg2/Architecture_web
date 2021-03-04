@@ -53,12 +53,12 @@
                 </ul>
                 {% if app.request.get('_route') == 'home' %}
                     <form class="form-inline my-2 my-lg-0">
-                        <input class="form-control mr-sm-2" name="filter" type="text" placeholder="Une recette, un ingrédient">
+                        <input class="form-control mr-sm-2" name="filter" type="text" placeholder="Une recette, une catégorie">
                         <button class="btn btn-secondary my-2 my-sm-0" type="submit">Rechercher</button>
                     </form>
                 {% elseif app.request.get('_route') == 'categories' %}
                     <form class="form-inline my-2 my-lg-0">
-                        <input class="form-control mr-sm-2" name="filter" type="text" placeholder="Une catégorie">
+                        <input class="form-control mr-sm-2" name="filter" type="text" placeholder="Une catégorie, description">
                         <button class="btn btn-secondary my-2 my-sm-0" type="submit" href="{{path('categories')}}">Rechercher</button>
                     </form>
                 {% else %}
