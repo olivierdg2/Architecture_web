@@ -9,13 +9,35 @@
 
     {{ form_start(formRecette) }}
 
+    <h3>Nom</h3>
+
     {{ form_row(formRecette.name) }}
 
+    <h3>Catégorie</h3>
+
     {{ form_row(formRecette.category) }}
+    <h3>Ingrédients</h3>
 
-    {{ form_row(formRecette.Ingredients) }}
+    <ul class="Ingredients" data-prototype="{{ form_widget(formRecette.Ingredients.vars.prototype)|e('html_attr') }}">
+        {% for Ingredient in formRecette.Ingredients %}
+            <li> {{ form_row(Ingredient.Ingredient)}} {{ form_row(Ingredient.Quantity)}}</li>
+        {% endfor %}
+    </ul>
+    <button type="button" class="btn btn-success" id="add_ing" data-collection-holder-class="Ingredients">Ajouter un ingrédient</button>
+    <p></p>
+    
+    <h3>Préparation</h3>
 
-    {{ form_row(formRecette.preparation) }}
+    <ul class="Preparation" data-prototype="{{ form_widget(formRecette.Preparation.vars.prototype)|e('html_attr') }}">
+        {% for step in formRecette.Preparation %}
+            <li> {{ form_row(step.Step)}}</li>
+        {% endfor %}
+    </ul>
+    <button type="button" class="btn btn-success" id="add_step" data-collection-holder-class="Preparation">Ajouter une étape</button>
+    <p></p>
+    <h3>Image</h3>
+
+    {{ form_row(formRecette.image) }}
 
     {{ form_widget(formRecette) }}
 
@@ -29,5 +51,74 @@
     <a href="{{ path('home') }}" class="btn btn-primary">Annuler</a>
     
     {{ form_end(formRecette) }}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script> 
+jQuery(document).ready(function() {
+    // Get the ul that holds the Collection of tags
+    var $IngredientsCollection = $('ul.Ingredients');
 
+    var $PreparationCollection = $('ul.Preparation');
+
+    $IngredientsCollection.find('li').each(function() {
+        addFormDeleteLink($(this),'Supprimer cet ingrédient');
+    });
+    $PreparationCollection.find('li').each(function() {
+        addFormDeleteLink($(this),'Supprimer cete étape');
+    });
+
+    // count the current form inputs we have (e.g. 2), use that as the new
+    // index when inserting a new item (e.g. 2)
+    $IngredientsCollection.data('index_ing', $IngredientsCollection.find('input').length);
+    $PreparationCollection.data('index_prep', $PreparationCollection.find('input').length);
+
+    $('body').on('click', '#add_ing', function(e) {
+        var $IngredientsCollectionClass = $(e.currentTarget).data('collectionHolderClass');
+        // add a new tag form (see next code block)
+        addFormToCollection($IngredientsCollectionClass,0);
+    })
+
+    $('body').on('click', '#add_step', function(e) {
+        var $PreparationCollectionClass = $(e.currentTarget).data('collectionHolderClass');
+        // add a new tag form (see next code block)
+        addFormToCollection($PreparationCollectionClass,1);
+    })
+});
+function addFormToCollection($CollectionHolderClass,$type) {
+    // Get the ul that holds the Collection of tags
+    var $CollectionHolder = $('.' + $CollectionHolderClass);
+
+    // Get the data-prototype explained earlier
+    var prototype = $CollectionHolder.data('prototype');
+
+    // get the new index
+    var index = $CollectionHolder.data('index');
+
+    var newForm = prototype;
+
+    newForm = newForm.replace(/__name__label__/g, index);
+    // increase the index with one for the next item
+    $CollectionHolder.data('index', index + 1);
+
+    // Display the form in the page in an li, before the "Add a tag" link li
+    var $newFormLi = $('<li></li>').append(newForm);
+
+    // Add the new form at the end of the list
+    $CollectionHolder.append($newFormLi);
+    if ($type == 0){
+        addFormDeleteLink($newFormLi,'Supprimer cet ingrédient');
+    }
+    else if ($type == 1){
+        addFormDeleteLink($newFormLi,'Supprimer cette étape');
+    }
+}
+function addFormDeleteLink($tagFormLi, $title) {
+    var $removeFormButton = $('<button class="btn btn-primary" type="button">' + $title + '</button><p></p>');
+    $tagFormLi.append($removeFormButton);
+
+    $removeFormButton.on('click', function(e) {
+        // remove the li for the tag form
+        $tagFormLi.remove();
+    });
+}
+</script>
 {% endblock %}

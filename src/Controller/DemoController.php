@@ -13,13 +13,21 @@ use App\Form\CategoryType;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\RecetteType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use App\Entity\Ingredients;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\File;
+use App\Service\FileUploader;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class DemoController extends AbstractController
 {
     /**
      * @Route("/", name="home")
      */
-    public function home(RecetteRepository $repo, Request $request): Response
+    public function home(RecetteRepository $repo, Request $request, NormalizerInterface $normalizer): Response
     {
         //Find all recipes in the RecetteRepository
         $recettes = $repo->findAll();
@@ -60,7 +68,7 @@ class DemoController extends AbstractController
      * @Route("/recette/new_recette", name="create_r")
      * @Route("/recette/{id}/edit", name="edit_r")
      */
-    public function create_recette(Recette $recette = null, Request $request, EntityManagerInterface $manager) {
+    public function create_recette(Recette $recette = null, Request $request, EntityManagerInterface $manager, FileUploader $fileUploader) {
 
         //If it's edit mode (no recette sent) create a new Recette with empty fields 
         if(!$recette){
@@ -70,19 +78,33 @@ class DemoController extends AbstractController
         else{
             $recette->setCategory(null);
         }
+        if ($recette->getImage()){
+            $recette->setImage(
+                new File($this->getParameter('images_directory').'/'.$recette->getImage())
+            );
+        }
 
+        
         //Create form according to the recette's format 
         $form = $this->createForm(RecetteType::class, $recette);
-        
+
         //Wait for request from the form 
         $form->handleRequest($request);
 
         //When the form is validated
         if($form->isSubmitted() && $form->createView()) {
+
             //If it's edit mode set it a new date time 
             if(!$recette->getId()){
                 $recette->setCreatedAt(new \DateTime());
             }
+            $imageFile = $form->get('image')->getData();
+            if ($imageFile) {
+                $imageFileName = $fileUploader->upload($imageFile);
+                $recette->setImage($imageFileName);
+            }
+            $recette->setIngredients($form->get('Ingredients')->getData());
+            $recette->setPreparation($form->get('Preparation')->getData());
             //Persist and flush the new recipe to the db 
             $manager->persist($recette);
             $manager->flush();

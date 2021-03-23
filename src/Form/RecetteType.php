@@ -8,8 +8,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use App\Form\IngredientType;
+use App\Form\StepType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Validator\Constraints\File;
 
 class RecetteType extends AbstractType
 {
@@ -18,20 +22,39 @@ class RecetteType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'attr' => ['placeholder' => "Nom de la recette"],
-                'label' => 'Nom'
+                'label' => False
             ])
             ->add('category', EntityType::class, [ 
                 'class' => Category::class,
                 'choice_label' => 'name',
-                'label' => 'Catégorie'
+                'label' => False
             ])
-            ->add('Ingredients', TextareaType::class, [
-                'attr' => ['placeholder' => "Liste des ingrédients"],
-                'label' => 'Ingrédients'
+            ->add('Ingredients', CollectionType::class, [
+                'entry_type' => IngredientType::class,
+                'allow_add' => True,
+                'allow_delete' => True,
+                'delete_empty' => True
             ])
-            ->add('preparation', TextareaType::class, [
-                'attr' => ['placeholder' => "Etapes de la préparation"],
-                'label' => 'Préparation'
+            ->add('Preparation', CollectionType::class, [
+                'entry_type' => StepType::class,
+                'allow_add' => True,
+                'allow_delete' => True,
+                'delete_empty' => True
+            ])
+            ->add('image', FileType::class, [
+                'label' => False,
+                'required' => False,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/png',
+                            'image/svg+xml',
+                            'image/vnd.sealedmedia.softseal.jpg	',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez sélectionner une image valide'
+                    ])
+                ]
             ])
         ;
     }

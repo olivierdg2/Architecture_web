@@ -2,8 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\RecetteRepository;
+use Monolog\Logger;
+use App\Entity\Step;
+use App\Entity\Ingredient;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\RecetteRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=RecetteRepository::class)
@@ -14,6 +18,7 @@ class Recette
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups("post:read")
      */
     private $id;
 
@@ -28,19 +33,24 @@ class Recette
     private $category;
 
     /**
-     * @ORM\Column(type="text")
-     */
-    private $Ingredients;
-
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $preparation;
-
-    /**
      * @ORM\Column(type="datetime")
      */
     private $createdAt;
+
+    /**
+     * @ORM\Column(type="array")
+     */
+    private $Ingredients = [];
+
+    /**
+     * @ORM\Column(type="array")
+     */
+    private $Preparation = [];
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $image;
 
     public function getId(): ?int
     {
@@ -71,30 +81,6 @@ class Recette
         return $this;
     }
 
-    public function getIngredients(): ?string
-    {
-        return $this->Ingredients;
-    }
-
-    public function setIngredients(string $Ingredients): self
-    {
-        $this->Ingredients = $Ingredients;
-
-        return $this;
-    }
-
-    public function getPreparation(): ?string
-    {
-        return $this->preparation;
-    }
-
-    public function setPreparation(string $preparation): self
-    {
-        $this->preparation = $preparation;
-
-        return $this;
-    }
-
     public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->createdAt;
@@ -103,6 +89,64 @@ class Recette
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getIngredients(): ?array
+    {
+        return $this->Ingredients;
+    }
+
+    public function setIngredients(array $Ingredients): self
+    {
+        $this->Ingredients = $Ingredients;
+
+        return $this;
+    }
+
+    public function addIngredient(Ingredient $ing): void
+    {
+        array_push($this->Ingredients,$ing);
+    }
+
+    public function removeIngredient(Ingredient $ing): void
+    {
+        $key = array_search($ing,$this->getIngredients());
+        unset($this->getIngredients()[$key]);
+    }
+
+    public function getPreparation(): ?array
+    {
+        return $this->Preparation;
+    }
+
+    public function setPreparation(array $Preparation): self
+    {
+        $this->Preparation = $Preparation;
+
+        return $this;
+    }
+
+    public function addPreparation(Step $step): void
+    {
+        array_push($this->Preparation,$step);
+    }
+
+    public function removePreparation(Step $step): void
+    {
+        $key = array_search($step,$this->getPreparation());
+        unset($this->getPreparation()[$key]);
+    }
+
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    public function setImage($image): self
+    {
+        $this->image = $image;
 
         return $this;
     }
