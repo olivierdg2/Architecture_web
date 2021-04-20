@@ -15,7 +15,9 @@ class StepType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('Step',TextType::class);
+            ->add('Step',TextType::class, [
+                'label' => False
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -18,37 +18,43 @@ class Recette
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("post:read")
+     * @Groups("recette:read")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("recette:read")
      */
     private $name;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="recettes")
+     * @Groups("recette:read")
      */
     private $category;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups("recette:read")
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="array")
+     * @Groups("recette:read")
      */
     private $Ingredients = [];
 
     /**
      * @ORM\Column(type="array")
+     * @Groups("recette:read")
      */
     private $Preparation = [];
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("recette:read")
      */
     private $image;
 

@@ -16,7 +16,9 @@ class IngredientType extends AbstractType
     {
         $builder
             ->add('Ingredient',TextType::class)
-            ->add('Quantity',TextType::class);
+            ->add('Quantity',TextType::class,[
+                "label" => "Quantité"
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

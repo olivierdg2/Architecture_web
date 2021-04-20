@@ -6,6 +6,7 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=CategoryRepository::class)
@@ -16,22 +17,24 @@ class Category
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups("recette:read")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("recette:read")
      */
     private $name;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups("recette:read")
      */
     private $description;
 
     /**
      * @ORM\OneToMany(targetEntity=Recette::class, mappedBy="category", cascade={"persist", "remove"})
-     * 
      */
     private $recettes;
 

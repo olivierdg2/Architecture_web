@@ -95,7 +95,7 @@ function addFormToCollection($CollectionHolderClass,$type) {
 
     var newForm = prototype;
 
-    newForm = newForm.replace(/__name__label__/g, index);
+    newForm = newForm.replace(/__name__/g, index);
     // increase the index with one for the next item
     $CollectionHolder.data('index', index + 1);
 

@@ -9,25 +9,33 @@ use App\Entity\Recette;
 use App\Repository\RecetteRepository;
 use App\Repository\CategoryRepository;
 use App\Entity\Category;
+use App\Entity\Ingredient;
 use App\Form\CategoryType;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\RecetteType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Entity\Ingredients;
+use App\Entity\Preparation;
+use App\Entity\Step;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\File;
 use App\Service\FileUploader;
+use Doctrine\ORM\EntityManager;
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Constraints\Date;
 
 class DemoController extends AbstractController
 {
     /**
      * @Route("/", name="home")
      */
-    public function home(RecetteRepository $repo, Request $request, NormalizerInterface $normalizer): Response
+    public function home(RecetteRepository $repo, Request $request): Response
     {
         //Find all recipes in the RecetteRepository
         $recettes = $repo->findAll();
@@ -198,5 +206,180 @@ class DemoController extends AbstractController
         return $this->redirectToRoute('categories', [
             'categories' => $categories
         ]);
+    }
+
+    /**
+     * @Route("/api/recettes", name="api_get_recettes", methods={"GET"})
+     */
+    public function api_get_recettes(RecetteRepository $repo, Request $request, NormalizerInterface $normalizer)
+    {
+        //Find all recette in the RecetteRepository then return it in the Json format
+        return $this->json($repo->findAll(), 200, [], ['groups' => "recette:read"]);
+    }
+
+    /**
+     * @Route("/api/recettes", name="api_set_recettes", methods={"POST"})
+     */
+    public function api__post_recette(RecetteRepository $repo,CategoryRepository $cat_repo, Request $request, SerializerInterface $serializer, EntityManagerInterface $em)
+    {
+        //Convert Json request to Array
+        $json_rec = $request->toArray();
+        //Check if all information needed are given 
+        if (isset($json_rec["Name"])  && isset($json_rec["Category"]) && isset($json_rec["Ingredients"]) && isset($json_rec["Preparation"])){
+            //If so, create a new Recette and set its properties with given elements
+            $recette = new Recette();
+            $recette->setName($json_rec["Name"]);
+            //Special case of the image, if it's not given, set it to null 
+            if (isset($json_rec["Image"])){
+                $recette->setImage($json_rec["Image"]);
+            }
+            else{
+                $recette->setImage(null);
+            }
+            
+            //Only Category's id is given, we must retrieve the entity 
+            $cat=$cat_repo->find($json_rec["Category"]);
+            $recette->setCategory($cat);
+            //Ingredients is made of Ingredient objects
+            $json_ing = $json_rec["Ingredients"];
+            $ingredients = [];
+            foreach ($json_ing as $element){
+                $ing = new Ingredient();
+                $ing->setIngredient($element["Ingredient"]);
+                $ing->setQuantity($element["Quantity"]);
+                array_push($ingredients,$ing);
+            }
+            $recette->setIngredients($ingredients);
+            //Preparation is made of Step objects
+            $json_prep = $json_rec["Preparation"];
+            $preparation = [];
+            foreach ($json_prep as $element){
+                $step = new Step();
+                $step->setStep($element);
+                array_push($preparation,$step);
+            }
+            $recette->setPreparation($preparation);
+            $recette->setCreatedAt(new \DateTime());
+            
+            $em->persist($recette);
+            $em->flush();
+
+            //Return the created recette 
+            return $this->json($recette, 201, [], ['groups' => 'recette:read']);
+        }
+        else {
+            return $this->json([
+                'status' => 400,
+                'message' => "One or more of the following attributes were not given : Name, Category, Ingredients, Preparation"
+                
+            ], 400);
+        }
+    }
+    /**
+     * @Route("/api/recettes", name="api_update_recettes", methods={"PUT"})
+     */
+    public function api__put_recette(RecetteRepository $repo,CategoryRepository $cat_repo, Request $request, SerializerInterface $serializer, EntityManagerInterface $em)
+    {
+        //Convert Json request to Array 
+        $json_rec = $request->toArray();
+        //Check if an id is given 
+        if (isset($json_rec["id"])){
+            //Retrieve recette from its id
+            $recette = $repo->find($json_rec["id"]);
+            //Check if there is a match 
+            if ($recette != null){
+                //If so, check if all needed information are given 
+                if (isset($json_rec["Name"])  && isset($json_rec["Category"]) && isset($json_rec["Ingredients"]) && isset($json_rec["Preparation"])){
+                    $recette->setName($json_rec["Name"]);
+
+                    if (isset($json_rec["Image"])){
+                        $recette->setImage($json_rec["Image"]);
+                    }
+                    
+                    $cat=$cat_repo->find($json_rec["Category"]);
+                    $recette->setCategory($cat);
+
+                    $json_ing = $json_rec["Ingredients"];
+                    $ingredients = [];
+                    foreach ($json_ing as $element){
+                        $ing = new Ingredient();
+                        $ing->setIngredient($element["Ingredient"]);
+                        $ing->setQuantity($element["Quantity"]);
+                        array_push($ingredients,$ing);
+                    }
+                    $recette->setIngredients($ingredients);
+                    $json_prep = $json_rec["Preparation"];
+                    $preparation = [];
+                    foreach ($json_prep as $element){
+                        $step = new Step();
+                        $step->setStep($element);
+                        array_push($preparation,$step);
+                    }
+                    $recette->setPreparation($preparation);
+                    
+                    $em->persist($recette);
+                    $em->flush();
+                    
+                    //Return the modified recette 
+                    return $this->json($recette, 201, [], ['groups' => 'recette:read']);
+                }
+                else {
+                    return $this->json([
+                        'status' => 400,
+                        'message' => "One or more of the following attributes were not given : Name, Category, Ingredients, Preparation"
+                        
+                    ], 400);
+                }
+            }
+            else {
+                return $this->json([
+                    'status' => 400,
+                    'message' => "No recette related to the given id"
+                ], 400);
+            }   
+            
+        }
+        else {
+            return $this->json([
+                'status' => 400,
+                'message' => "Recette's id not given"
+            ], 400);
+        }
+    }
+    /**
+     * @Route("/api/recettes", name="api_delete_recettes", methods={"DELETE"})
+     */
+    public function api_delete_recettes(RecetteRepository $repo, Request $request, NormalizerInterface $normalizer, EntityManagerInterface $em)
+    {
+        //Convert Json request to Array
+        $json_rec = $request->toArray();
+        if (isset($json_rec["id"])){
+            $recette = $repo->find($json_rec["id"]);
+            if ($recette != null){
+                $em->remove($recette);
+                $em->flush();
+                return $this->json([
+                    'status' => 200,
+                    'message' => "Deleted recette successfuly"
+                    
+                ], 400);
+            }
+            else {
+                return $this->json([
+                    'status' => 400,
+                    'message' => "No recette related to the given id"
+                ], 400);
+            }
+        }
+        else {
+            return $this->json([
+                'status' => 400,
+                'message' => "Recette's id not given"
+            ], 400);
+        }
+        
+
+        //Find all recette in the RecetteRepository then return it in the Json format
+        return $this->json($repo->findAll(), 200, [], ['groups' => "recette:read"]);
     }
 }

@@ -1,13 +1,14 @@
 <?php
 
 namespace App\Entity;
+
 use Symfony\Component\Serializer\Annotation\Groups;
 
-class Step
+class Preparation
 {
     /**
      * @Groups("recette:read")
-    */
+     */
     private $Step;
 
     public function getStep(): ?string

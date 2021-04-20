@@ -2,11 +2,17 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Serializer\Annotation\Groups;
 class Ingredient
 {
-
+    /**
+     * @Groups("recette:read")
+     */
     private $Ingredient;
 
+    /**
+     * @Groups("recette:read")
+     */
     private $Quantity;
 
     public function getIngredient(): ?string
