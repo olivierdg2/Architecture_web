@@ -18,18 +18,20 @@ class Category
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups("recette:read")
+     * @Groups("category:read")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups("recette:read")
+     * @Groups("category:read")
      */
     private $name;
 
     /**
      * @ORM\Column(type="text")
-     * @Groups("recette:read")
+     * @Groups("category:read")
      */
     private $description;
 

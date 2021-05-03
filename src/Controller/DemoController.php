@@ -218,6 +218,35 @@ class DemoController extends AbstractController
     }
 
     /**
+     * @Route("/api/recette", name="api_get_recette_by_id", methods={"GET"})
+     */
+    public function api_get_recette_by_id(RecetteRepository $repo, Request $request, NormalizerInterface $normalizer)
+    {
+        $json_rec = $request->toArray();
+        if (isset($json_rec["id"])) {
+            $recette = $repo->find($json_rec["id"]);
+            if ($recette != null){
+                //Find a recette from its id in the RecetteRepository then return it in the Json format
+                return $this->json($repo->find($json_rec["id"]), 200, [], ['groups' => "recette:read"]);
+            }
+            else {
+                return $this->json([
+                    'status' => 400,
+                    'message' => "No recette related to the given id"
+                ], 400);   
+            }
+
+        }
+        else {
+            return $this->json([
+                'status' => 400,
+                'message' => "No id was given"
+            ], 400); 
+        }
+
+    }
+
+    /**
      * @Route("/api/recettes", name="api_set_recettes", methods={"POST"})
      */
     public function api__post_recette(RecetteRepository $repo,CategoryRepository $cat_repo, Request $request, SerializerInterface $serializer, EntityManagerInterface $em)
@@ -377,9 +406,149 @@ class DemoController extends AbstractController
                 'message' => "Recette's id not given"
             ], 400);
         }
-        
+    }
 
-        //Find all recette in the RecetteRepository then return it in the Json format
-        return $this->json($repo->findAll(), 200, [], ['groups' => "recette:read"]);
+    /**
+     * @Route("/api/categories", name="api_get_categories", methods={"GET"})
+     */
+    public function api_get_categories(CategoryRepository $repo, Request $request, NormalizerInterface $normalizer)
+    {
+        //Find all actegory in the CategoryRepository then return it in the Json format
+        return $this->json($repo->findAll(), 200, [], ['groups' => "category:read"]);
+    }
+
+    /**
+     * @Route("/api/category", name="api_get_category_by_id", methods={"GET"})
+     */
+    public function api_get_category_by_id(CategoryRepository $repo, Request $request, NormalizerInterface $normalizer)
+    {
+        $json_rec = $request->toArray();
+        if (isset($json_rec["id"])) {
+            $category = $repo->find($json_rec["id"]);
+            if ($category != null){
+                //Find a category from its id in the CategoryRepository then return it in the Json format
+                return $this->json($repo->find($json_rec["id"]), 200, [], ['groups' => "category:read"]);
+            }
+            else {
+                return $this->json([
+                    'status' => 400,
+                    'message' => "No category related to the given id"
+                ], 400);   
+            }
+
+        }
+        else {
+            return $this->json([
+                'status' => 400,
+                'message' => "No id was given"
+            ], 400); 
+        }
+
+    }
+    /**
+     * @Route("/api/categories", name="api_set_category", methods={"POST"})
+     */
+    public function api__post_category(CategoryRepository $repo, Request $request, SerializerInterface $serializer, EntityManagerInterface $em)
+    {
+        //Convert Json request to Array
+        $json_rec = $request->toArray();
+        //Check if all information needed are given 
+        if (isset($json_rec["Name"])  && isset($json_rec["Description"])){
+            //If so, create a new Recette and set its properties with given elements
+            $category = new Category();
+            $category->setName($json_rec["Name"]);
+            $category->setDescription($json_rec["Description"]);
+            $em->persist($category);
+            $em->flush();
+
+            //Return the created recette 
+            return $this->json($category, 201, [], ['groups' => 'category:read']);
+        }
+        else {
+            return $this->json([
+                'status' => 400,
+                'message' => "One or more of the following attributes were not given : Name, Description"
+                
+            ], 400);
+        }
+    }
+    /**
+     * @Route("/api/categories", name="api_update_category", methods={"PUT"})
+     */
+    public function api__put_category(CategoryRepository $repo, Request $request, EntityManagerInterface $em)
+    {
+        //Convert Json request to Array 
+        $json_rec = $request->toArray();
+        //Check if an id is given 
+        if (isset($json_rec["id"])){
+            //Retrieve category from its id
+            $category = $repo->find($json_rec["id"]);
+            //Check if there is a match 
+            if ($category != null){
+                //If so, check if all needed information are given 
+                if (isset($json_rec["Name"])  && isset($json_rec["Description"]) ){
+                    $category->setName($json_rec["Name"]);
+                    $category->setDescription($json_rec["Description"]);
+                    
+                    $em->persist($category);
+                    $em->flush();
+                    
+                    //Return the modified category
+                    return $this->json($category, 201, [], ['groups' => 'category:read']);
+                }
+                else {
+                    return $this->json([
+                        'status' => 400,
+                        'message' => "One or more of the following attributes were not given : Name, Description"
+                        
+                    ], 400);
+                }
+            }
+            else {
+                return $this->json([
+                    'status' => 400,
+                    'message' => "No category related to the given id"
+                ], 400);
+            }   
+            
+        }
+        else {
+            return $this->json([
+                'status' => 400,
+                'message' => "Recette's id not given"
+            ], 400);
+        }
+    }
+    /**
+     * @Route("/api/categories", name="api_delete_categories", methods={"DELETE"})
+     */
+    public function api_delete_categories(CategoryRepository $repo, Request $request, EntityManagerInterface $em)
+    {
+        //Convert Json request to Array
+        $json_rec = $request->toArray();
+        if (isset($json_rec["id"])){
+            $category = $repo->find($json_rec["id"]);
+            if ($category != null){
+                $em->remove($category);
+                $em->flush();
+                return $this->json([
+                    'status' => 200,
+                    'message' => "Deleted category successfuly"
+                    
+                ], 400);
+            }
+            else {
+                return $this->json([
+                    'status' => 400,
+                    'message' => "No category related to the given id"
+                ], 400);
+            }
+        }
+        else {
+            return $this->json([
+                'status' => 400,
+                'message' => "Category's id not given"
+            ], 400);
+        }
     }
 }
