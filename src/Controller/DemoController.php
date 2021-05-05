@@ -273,7 +273,7 @@ class DemoController extends AbstractController
             $preparation = [];
             foreach ($json_prep as $element){
                 $step = new Step();
-                $step->setStep($element);
+                $step->setStep($element["Step"]);
                 array_push($preparation,$step);
             }
             $recette->setPreparation($preparation);
