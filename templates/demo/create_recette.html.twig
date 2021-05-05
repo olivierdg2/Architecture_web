@@ -68,8 +68,8 @@ jQuery(document).ready(function() {
 
     // count the current form inputs we have (e.g. 2), use that as the new
     // index when inserting a new item (e.g. 2)
-    $IngredientsCollection.data('index_ing', $IngredientsCollection.find('input').length);
-    $PreparationCollection.data('index_prep', $PreparationCollection.find('input').length);
+    $IngredientsCollection.data('index', $IngredientsCollection.find('input').length);
+    $PreparationCollection.data('index', $PreparationCollection.find('input').length);
 
     $('body').on('click', '#add_ing', function(e) {
         var $IngredientsCollectionClass = $(e.currentTarget).data('collectionHolderClass');
@@ -92,6 +92,7 @@ function addFormToCollection($CollectionHolderClass,$type) {
 
     // get the new index
     var index = $CollectionHolder.data('index');
+    console.log(index);
 
     var newForm = prototype;
 
