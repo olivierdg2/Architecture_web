@@ -306,14 +306,14 @@ class DemoController extends AbstractController
         //Check if there is a match 
         if ($recette != null){
             //If so, check if all needed information are given 
-            if (isset($json_rec["Name"])  && isset($json_rec["Category"]) && isset($json_rec["Ingredients"]) && isset($json_rec["Preparation"])){
-                $recette->setName($json_rec["Name"]);
+            if (isset($json_rec["name"])  && isset($json_rec["category"]) && isset($json_rec["Ingredients"]) && isset($json_rec["Preparation"])){
+                $recette->setName($json_rec["name"]);
 
                 if (isset($json_rec["Image"])){
                     $recette->setImage($json_rec["Image"]);
                 }
                 
-                $cat=$cat_repo->find($json_rec["Category"]);
+                $cat=$cat_repo->find($json_rec["category"]);
                 $recette->setCategory($cat);
 
                 $json_ing = $json_rec["Ingredients"];
@@ -438,14 +438,16 @@ class DemoController extends AbstractController
      */
     public function api__put_category($id,CategoryRepository $repo, Request $request, EntityManagerInterface $em)
     {
+        //Convert Json request to Array
+        $json_rec = $request->toArray();
         //Retrieve category from its id
         $category = $repo->find($id);
         //Check if there is a match 
         if ($category != null){
             //If so, check if all needed information are given 
-            if (isset($json_rec["Name"])  && isset($json_rec["Description"]) ){
-                $category->setName($json_rec["Name"]);
-                $category->setDescription($json_rec["Description"]);
+            if (isset($json_rec["name"])  && isset($json_rec["description"]) ){
+                $category->setName($json_rec["name"]);
+                $category->setDescription($json_rec["description"]);
                 
                 $em->persist($category);
                 $em->flush();
