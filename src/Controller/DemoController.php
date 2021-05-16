@@ -109,7 +109,7 @@ class DemoController extends AbstractController
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
                 $imageFileName = $fileUploader->upload($imageFile);
-                $recette->setImage($imageFileName);
+                $recette->setImage("uploads/images/" . $imageFileName);
             }
             $recette->setIngredients($form->get('Ingredients')->getData());
             $recette->setPreparation($form->get('Preparation')->getData());
@@ -238,7 +238,7 @@ class DemoController extends AbstractController
     /**
      * @Route("/api/recettes", name="api_set_recettes", methods={"POST"})
      */
-    public function api__post_recette(RecetteRepository $repo,CategoryRepository $cat_repo, Request $request, SerializerInterface $serializer, EntityManagerInterface $em)
+    public function api_post_recette(RecetteRepository $repo,CategoryRepository $cat_repo, Request $request, SerializerInterface $serializer, EntityManagerInterface $em)
     {
         //Convert Json request to Array
         $json_rec = $request->toArray();
@@ -297,7 +297,7 @@ class DemoController extends AbstractController
     /**
      * @Route("/api/recette/{id}", name="api_update_recette", methods={"PUT"},requirements={"id":"\d+"})
      */
-    public function api__put_recette($id,RecetteRepository $repo,CategoryRepository $cat_repo, Request $request, SerializerInterface $serializer, EntityManagerInterface $em)
+    public function api_put_recette($id,RecetteRepository $repo,CategoryRepository $cat_repo, Request $request, SerializerInterface $serializer, EntityManagerInterface $em)
     {
         //Convert Json request to Array
         $json_rec = $request->toArray();
@@ -356,7 +356,7 @@ class DemoController extends AbstractController
         }   
     }
     /**
-     * @Route("/api/recettes/{id}", name="api_delete_recettes", methods={"DELETE"}, requirements={"id":"\d+"})
+     * @Route("/api/recette/{id}", name="api_delete_recettes", methods={"DELETE"}, requirements={"id":"\d+"})
      */
     public function api_delete_recettes($id, RecetteRepository $repo, Request $request, NormalizerInterface $normalizer, EntityManagerInterface $em)
     {

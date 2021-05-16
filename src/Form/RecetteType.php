@@ -13,7 +13,7 @@ use App\Form\IngredientType;
 use App\Form\StepType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\Image;
 
 class RecetteType extends AbstractType
 {
@@ -33,28 +33,19 @@ class RecetteType extends AbstractType
                 'entry_type' => IngredientType::class,
                 'allow_add' => True,
                 'allow_delete' => True,
-                'delete_empty' => True
+                'delete_empty' => True,
+                'label' => False
             ])
             ->add('Preparation', CollectionType::class, [
                 'entry_type' => StepType::class,
                 'allow_add' => True,
                 'allow_delete' => True,
-                'delete_empty' => True
+                'delete_empty' => True,
+                'label' => False
             ])
             ->add('image', FileType::class, [
                 'label' => False,
-                'required' => False,
-                'constraints' => [
-                    new File([
-                        'maxSize' => '1024k',
-                        'mimeTypes' => [
-                            'image/png',
-                            'image/svg+xml',
-                            'image/vnd.sealedmedia.softseal.jpg	',
-                        ],
-                        'mimeTypesMessage' => 'Veuillez sélectionner une image valide'
-                    ])
-                ]
+                'required' => False
             ])
         ;
     }

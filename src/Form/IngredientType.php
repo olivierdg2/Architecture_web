@@ -15,7 +15,9 @@ class IngredientType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('Ingredient',TextType::class)
+            ->add('Ingredient',TextType::class,[
+                "label" => "Ingrédient"
+            ])
             ->add('Quantity',TextType::class,[
                 "label" => "Quantité"
             ]);

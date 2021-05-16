@@ -5,7 +5,7 @@
         <h2>{{recette.name}}</h2>
         <div class = "metadata">Ecrit le {{recette.createdAt | date('d/m/Y')}} à {{ recette.createdAt | date('H:i') }}</div>
         {% if recette.image != null %}
-        <img src="{{ asset('uploads/images/' ~ recette.image) }}" width="20%" height="20%"></img>
+        <img src="{{ asset(recette.image) }}" width="20%" height="20%"></img>
         {% endif %}
         <div>
             <h3>Catégorie</h3>
