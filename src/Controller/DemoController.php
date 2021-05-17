@@ -356,9 +356,9 @@ class DemoController extends AbstractController
         }   
     }
     /**
-     * @Route("/api/recette/{id}", name="api_delete_recettes", methods={"DELETE"}, requirements={"id":"\d+"})
+     * @Route("/api/recette/{id}", name="api_delete_recette", methods={"DELETE"}, requirements={"id":"\d+"})
      */
-    public function api_delete_recettes($id, RecetteRepository $repo, Request $request, NormalizerInterface $normalizer, EntityManagerInterface $em)
+    public function api_delete_recette($id, RecetteRepository $repo, Request $request, NormalizerInterface $normalizer, EntityManagerInterface $em)
     {
         $recette = $repo->find($id);
         if ($recette != null){
@@ -409,7 +409,7 @@ class DemoController extends AbstractController
     /**
      * @Route("/api/categories", name="api_set_category", methods={"POST"})
      */
-    public function api__post_category(CategoryRepository $repo, Request $request, SerializerInterface $serializer, EntityManagerInterface $em)
+    public function api_post_category(CategoryRepository $repo, Request $request, SerializerInterface $serializer, EntityManagerInterface $em)
     {
         //Convert Json request to Array
         $json_rec = $request->toArray();
@@ -436,7 +436,7 @@ class DemoController extends AbstractController
     /**
      * @Route("/api/category/{id}", name="api_update_category", methods={"PUT"},requirements={"id":"\d+"})
      */
-    public function api__put_category($id,CategoryRepository $repo, Request $request, EntityManagerInterface $em)
+    public function api_put_category($id,CategoryRepository $repo, Request $request, EntityManagerInterface $em)
     {
         //Convert Json request to Array
         $json_rec = $request->toArray();
