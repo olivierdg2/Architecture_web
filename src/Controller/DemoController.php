@@ -325,11 +325,12 @@ class DemoController extends AbstractController
                     array_push($ingredients,$ing);
                 }
                 $recette->setIngredients($ingredients);
+                //Preparation is made of Step objects
                 $json_prep = $json_rec["Preparation"];
                 $preparation = [];
                 foreach ($json_prep as $element){
                     $step = new Step();
-                    $step->setStep($element);
+                    $step->setStep($element["Step"]);
                     array_push($preparation,$step);
                 }
                 $recette->setPreparation($preparation);
