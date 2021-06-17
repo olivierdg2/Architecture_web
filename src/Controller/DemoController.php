@@ -87,9 +87,7 @@ class DemoController extends AbstractController
             $recette->setCategory(null);
         }
         if ($recette->getImage()){
-            $recette->setImage(
-                new File($this->getParameter('images_directory').'/'.$recette->getImage())
-            );
+            $recette->setImage(null);
         }
 
         
@@ -109,7 +107,7 @@ class DemoController extends AbstractController
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
                 $imageFileName = $fileUploader->upload($imageFile);
-                $recette->setImage("uploads/images/" . $imageFileName);
+                $recette->setImage("uploads/images/".$imageFileName);
             }
             $recette->setIngredients($form->get('Ingredients')->getData());
             $recette->setPreparation($form->get('Preparation')->getData());
